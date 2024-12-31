@@ -1,0 +1,189 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy New Year!</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: #000;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            overflow: hidden;
+        }
+        #container {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        #countdown-timer {
+            font-size: 48px;
+            color: white;
+            text-shadow: 0 0 10px white;
+        }
+        #happy-new-year {
+            font-size: 64px;
+            font-weight: bold;
+            color: white;
+            text-shadow: 0 0 10px #fff, 0 0 20px #ff00ff, 0 0 30px #ff00ff;
+        }
+        #message-button {
+            font-size: 24px;
+            padding: 16px 32px;
+            border: none;
+            border-radius: 8px;
+            background-color: #4caf50;
+            color: #fff;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        #message-button:hover {
+            background-color: #45a049;
+        }
+        #timer-container {
+            font-size: 48px;
+            color: white;
+            text-shadow: 0 0 10px white;
+        }
+        #surprise-text {
+            font-size: 24px;
+            color: white;
+            opacity: 0;
+            transition: opacity 2s ease-in-out;
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <h1 id="happy-new-year" style="display:none;"></h1>
+        <div id="countdown-timer"></div>
+        <button id="message-button" style="display:none;"></button>
+        <div id="timer-container" style="display:none;"></div>
+        <p id="surprise-text" style="display:none;"></p>
+    </div>
+    <script>
+        function updateCountdown() {
+            const now = new Date();
+            const target = new Date();
+            target.setUTCHours(22, 0, 0, 0);
+            if (now > target) target.setUTCDate(target.getUTCDate() + 1);
+            const diff = target - now;
+
+            const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+            const minutes = Math.floor((diff / (1000 * 60)) % 60);
+            const seconds = Math.floor((diff / 1000) % 60);
+
+            document.getElementById("countdown-timer").innerText = `Time to Midnight (CAT): ${hours}h ${minutes}m ${seconds}s`;
+        }
+
+        function celebrate() {
+            const end = Date.now() + 5000;
+            const body = document.body;
+            for (let i = 0; i < 20; i++) {
+                const bubble = document.createElement("div");
+                bubble.classList.add("bubble");
+                body.appendChild(bubble);
+
+                const balloon = document.createElement("div");
+                balloon.classList.add("balloon");
+                body.appendChild(balloon);
+            }
+        }
+
+        function changeColors(element, backgroundColors, textColors) {
+            let bgIndex = 0, textIndex = 0;
+            setInterval(() => {
+                document.body.style.backgroundColor = backgroundColors[bgIndex];
+                bgIndex = (bgIndex + 1) % backgroundColors.length;
+            }, 2000);
+            setInterval(() => {
+                element.style.color = textColors[textIndex];
+                textIndex = (textIndex + 1) % textColors.length;
+            }, 1000);
+        }
+
+        function typeMessage(element, message, delay) {
+            let index = 0;
+            element.style.display = "block";
+            element.style.opacity = 1;
+            const typing = setInterval(() => {
+                element.innerText += message[index];
+                index++;
+                if (index >= message.length) clearInterval(typing);
+            }, delay);
+        }
+
+        function checkMidnight() {
+            const now = new Date();
+            const targetHour = 22; // Midnight CAT in UTC
+            if (now.getUTCHours() === targetHour && now.getUTCMinutes() === 0) {
+                main();
+                clearInterval(midnightCheck);
+            }
+        }
+
+        function main() {
+            document.getElementById("countdown-timer").style.display = "none";
+
+            const happyNewYear = document.getElementById("happy-new-year");
+            const messageButton = document.getElementById("message-button");
+            const timerContainer = document.getElementById("timer-container");
+            const surpriseText = document.getElementById("surprise-text");
+
+            celebrate();
+            happyNewYear.style.display = "block";
+            happyNewYear.innerText = "HAPPY NEW YEAR!";
+            changeColors(happyNewYear, ["#000", "#111", "#222"], ["#FF69B4", "#33CC33", "#6666CC"]);
+
+            setTimeout(() => {
+                happyNewYear.style.display = "none";
+                messageButton.style.display = "block";
+                messageButton.innerText = "Start New Year Messages!";
+            }, 5000);
+
+            messageButton.addEventListener("click", () => {
+                const messages = [
+                    "Wishing you joy and prosperity!",
+                    "May love and success follow you!",
+                    "Cheers to fresh beginnings!",
+                    "Happiness and health in abundance!",
+                    "Your best year starts now!"
+                ];
+                let index = 0;
+                messageButton.addEventListener("mouseover", () => {
+                    if (index < messages.length) {
+                        messageButton.innerText = messages[index++];
+                    } else {
+                        setTimeout(() => {
+                            messageButton.style.display = "none";
+                            timerContainer.style.display = "block";
+                            timerContainer.innerText = "Timer starts now!";
+                            setInterval(() => {
+                                const now = new Date();
+                                const nextYear = new Date(now.getFullYear() + 1, 0, 1);
+                                const timeDiff = nextYear - now;
+                                const days = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
+                                const hours = Math.floor((timeDiff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                                const minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
+                                const seconds = Math.floor((timeDiff % (1000 * 60)) / 1000);
+                                timerContainer.innerText = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+                            }, 1000);
+                            typeMessage(surpriseText, "Haha, you gotta go through another year. Have fun!", 100);
+                        }, 1000);
+                    }
+                });
+            });
+        }
+
+        setInterval(updateCountdown, 1000);
+        const midnightCheck = setInterval(checkMidnight, 1000);
+    </script>
+</body>
+</html>
